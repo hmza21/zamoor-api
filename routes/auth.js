@@ -45,7 +45,7 @@ router.get('/logout', (req, res, next) => {
 
 router.get('/status', async (req, res) => {
   if (req.session && req.session.userId)
-    return res.json({ message: 'User is logged in as ' + req.session.userId })
+    return res.json({ userId: req.session.userId })
   return res.json({ message: 'User is not logged in' })
 })
 
