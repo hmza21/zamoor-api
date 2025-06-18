@@ -20,9 +20,10 @@ dotenv.config();
 const app = express()
 const PORT = process.env.PORT
 
-app.use(cors())
-app.use(express.json())
-app.use(morgan('dev'))
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}))
 
 app.use(expressSession({
   secret: 'test',
@@ -33,6 +34,9 @@ app.use(expressSession({
     maxAge: 1000 * 60 * 60 * 24
   }
 }))
+
+app.use(express.json())
+app.use(morgan('dev'))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/media', mediaRoutes)
@@ -45,4 +49,4 @@ app.use('/api/chats', chatsRoutes)
 
 app.get('/', (req, res) => res.send('Welcome to the API'))
 
-db.connect().then(() => app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`)))
+db.connect().then(() => app.listen(PORT, () => console.log(`Server running on http://127.0.0.1:${PORT}`)))
