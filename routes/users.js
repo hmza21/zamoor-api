@@ -1,11 +1,13 @@
 import express from 'express'
 import db from '../db.js'
+import isAuthenticated from '../middleware/isAuthenticated.js'
+
 const router = express.Router()
 
 // Users Routes
 
 // GET /api/users - Get all users
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
 
     const users = await db.query('SELECT * FROM users')
     if (users.rows.length === 0) {
@@ -16,7 +18,7 @@ router.get('/', async (req, res) => {
 })
 
 // GET /api/users/:id - Get user by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
 
     const { id } = req.params
     const user = await db.query('SELECT * FROM users WHERE id = $1', [id])
@@ -28,7 +30,7 @@ router.get('/:id', async (req, res) => {
 })
 
 // POST /api/users - Create a new user
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
 
     const { email, username, password } = req.body
     const exists = await db.query('SELECT * FROM users WHERE email = $1', [email]) || await db.query('SELECT * FROM users WHERE username = $1', [username])
@@ -45,7 +47,7 @@ router.post('/', async (req, res) => {
 })
 
 // PUT /api/users/:id - Update user by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
     const { email, username, password } = req.body
@@ -64,7 +66,7 @@ router.put('/:id', async (req, res) => {
 })
 
 // DELETE /api/users/:id - Delete user by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
 
@@ -81,7 +83,7 @@ router.delete('/:id', async (req, res) => {
 // Follow/Unfollow Routes
 
 // GET /api/users/:id/followers - Get followers of a user
-router.get('/:id/followers', async (req, res) => {
+router.get('/:id/followers', isAuthenticated, async (req, res) => {
 
     const { id } = req.params
     const followers = await db.query(
@@ -97,7 +99,7 @@ router.get('/:id/followers', async (req, res) => {
 })
 
 // GET /api/users/:id/following - Get users that a user is following
-router.get('/:id/following', async (req, res) => {
+router.get('/:id/following', isAuthenticated, async (req, res) => {
 
     const { id } = req.params
     const following = await db.query(
@@ -113,7 +115,7 @@ router.get('/:id/following', async (req, res) => {
 })
 
 // POST /api/users/:id/follow - Follow a user
-router.post('/:id/follow', async (req, res) => {
+router.post('/:id/follow', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
     const { userId } = req.body
@@ -132,7 +134,7 @@ router.post('/:id/follow', async (req, res) => {
 })
 
 // DELETE /api/users/:id/unfollow - Unfollow a user
-router.delete('/:id/unfollow', async (req, res) => {
+router.delete('/:id/unfollow', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
     const { userId } = req.body

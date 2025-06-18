@@ -1,11 +1,13 @@
 import express from 'express'
 import db from '../db.js'
+import isAuthenticated from '../middleware/isAuthenticated.js'
+
 const router = express.Router()
 
 // Posts Routes
 
 // GET /api/posts - Get all posts
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
     
     const posts = await db.query('SELECT * FROM posts')
     if (posts.rows.length === 0) {
@@ -16,7 +18,7 @@ router.get('/', async (req, res) => {
 })
 
 // GET /api/posts/:id - Get post by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
 
     const { id } = req.params
     const post = await db.query('SELECT * FROM posts WHERE id = $1', [id])
@@ -28,7 +30,7 @@ router.get('/:id', async (req, res) => {
 })
 
 // POST /api/posts - Create a new post
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
     const { authorId, content } = req.body
 
     if (!authorId || !content) {
@@ -44,8 +46,8 @@ router.post('/', async (req, res) => {
 })
 
 // PUT /api/posts/:id - Update post by ID
-router.put('/:id', async (req, res) => {
-    
+router.put('/:id', isAuthenticated, async (req, res) => {
+
     const { id } = req.params
     const { content } = req.body
 
@@ -63,7 +65,7 @@ router.put('/:id', async (req, res) => {
 })
 
 // DELETE /api/posts/:id - Delete post by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
 
@@ -81,7 +83,7 @@ router.delete('/:id', async (req, res) => {
 // Likes Routes
 
 // GET /api/posts/:id/likes - Get likes for a post
-router.get('/:id/likes', async (req, res) => {
+router.get('/:id/likes', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
     const likes = await db.query('SELECT * FROM likes WHERE post_id = $1', [id])
@@ -93,7 +95,7 @@ router.get('/:id/likes', async (req, res) => {
 })
 
 // POST /api/posts/:id/likes - Like a post
-router.post('/:id/likes', async (req, res) => {
+router.post('/:id/likes', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
     const { userId } = req.body
@@ -121,7 +123,7 @@ router.post('/:id/likes', async (req, res) => {
 })
 
 // DELETE /api/posts/:id/likes/:userId - Unlike a post
-router.delete('/:id/likes/:userId', async (req, res) => {
+router.delete('/:id/likes/:userId', isAuthenticated, async (req, res) => {
     
     const { id, userId } = req.params
 
@@ -143,7 +145,7 @@ router.delete('/:id/likes/:userId', async (req, res) => {
 // Attachments Routes
 
 // GET /api/posts/:id/attachments - Get attachments for a post
-router.get('/:id/attachments', async (req, res) => {
+router.get('/:id/attachments', isAuthenticated, async (req, res) => {
     
     const { id } = req.params
     const attachments = await db.query('SELECT * FROM post_attachments WHERE post_id = $1', [id])
@@ -155,7 +157,7 @@ router.get('/:id/attachments', async (req, res) => {
 })
 
 // POST /api/posts/:id/attachments - Add an attachment to a post
-router.post('/:id/attachments', async (req, res) => {
+router.post('/:id/attachments', isAuthenticated, async (req, res) => {
     const { id } = req.params
     const { mediaId } = req.body
 
@@ -177,7 +179,7 @@ router.post('/:id/attachments', async (req, res) => {
 })
 
 // DELETE /api/posts/:id/attachments/:mediaId - Remove an attachment from a post
-router.delete('/:id/attachments/:mediaId', async (req, res) => {
+router.delete('/:id/attachments/:mediaId', isAuthenticated, async (req, res) => {
     
     const { id, mediaId } = req.params
 

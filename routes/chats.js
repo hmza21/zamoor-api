@@ -1,11 +1,13 @@
 import express from 'express'
 import db from '../db.js'
+import isAuthenticated from '../middleware/isAuthenticated.js'
+
 const router = express.Router()
 
 // Chats API routes
 
 // Get all chats for a specific user
-router.get('/user/:user_id', async (req, res) => {
+router.get('/user/:user_id', isAuthenticated, async (req, res) => {
     const { user_id } = req.params
     try {
         const chats = await db.query('SELECT * FROM chats WHERE user_id = $1', [user_id])
@@ -20,7 +22,7 @@ router.get('/user/:user_id', async (req, res) => {
 })
 
 // Get a specific chat by ID
-router.get('/:chat_id', async (req, res) => {
+router.get('/:chat_id', isAuthenticated, async (req, res) => {
     const { chat_id } = req.params
     try {
         const chat = await db.query('SELECT * FROM chats WHERE id = $1', [chat_id])
@@ -35,7 +37,7 @@ router.get('/:chat_id', async (req, res) => {
 })
 
 // Create a new chat for two users
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
     const { user1_id, user2_id } = req.body
 
     if (!user1_id || !user2_id) {
@@ -55,7 +57,7 @@ router.post('/', async (req, res) => {
 })
 
 // Delete a specific chat
-router.delete('/:chat_id', async (req, res) => {
+router.delete('/:chat_id', isAuthenticated, async (req, res) => {
     const { chat_id } = req.params
 
     try {
@@ -73,7 +75,7 @@ router.delete('/:chat_id', async (req, res) => {
 // Messages API routes
 
 // Get all messages in a specific chat
-router.get('/:chat_id/messages', async (req, res) => {
+router.get('/:chat_id/messages', isAuthenticated, async (req, res) => {
     const { chat_id } = req.params
     try {
         const messages = await db.query('SELECT * FROM messages WHERE chat_id = $1', [chat_id])
@@ -88,7 +90,7 @@ router.get('/:chat_id/messages', async (req, res) => {
 })
 
 // Create a new message in a specific chat
-router.post('/:chat_id/messages', async (req, res) => {
+router.post('/:chat_id/messages', isAuthenticated, async (req, res) => {
     const { chat_id } = req.params
     const { user_id, content } = req.body
 
@@ -109,7 +111,7 @@ router.post('/:chat_id/messages', async (req, res) => {
 })
 
 // Delete a specific message
-router.delete('/:chat_id/messages/:message_id', async (req, res) => {
+router.delete('/:chat_id/messages/:message_id', isAuthenticated, async (req, res) => {
     const { message_id } = req.params
 
     try {
@@ -125,7 +127,7 @@ router.delete('/:chat_id/messages/:message_id', async (req, res) => {
 })
 
 // Update a specific message
-router.put('/:chat_id/messages/:message_id', async (req, res) => {
+router.put('/:chat_id/messages/:message_id', isAuthenticated, async (req, res) => {
     const { message_id } = req.params
     const { content } = req.body
 

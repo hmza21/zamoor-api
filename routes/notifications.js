@@ -1,11 +1,13 @@
 import express from 'express'
 import db from '../db.js'
+import isAuthenticated from '../middleware/isAuthenticated.js'
+
 const router = express.Router()
 
 // Notifications API routes
 
 // Get all notifications for a specific user
-router.get('/:user_id', async (req, res) => {
+router.get('/:user_id', isAuthenticated, async (req, res) => {
     const { user_id } = req.params
     try {
         const notifications = await db.query('SELECT * FROM notifications WHERE user_id = $1', [user_id])
@@ -20,7 +22,7 @@ router.get('/:user_id', async (req, res) => {
 })
 
 // Create a new notification for a specific user
-router.post('/:user_id', async (req, res) => {
+router.post('/:user_id', isAuthenticated, async (req, res) => {
     const { user_id } = req.params
     const { type, message } = req.body
 
@@ -41,7 +43,7 @@ router.post('/:user_id', async (req, res) => {
 })
 
 // Update a specific notification
-router.put('/:notification_id', async (req, res) => {
+router.put('/:notification_id', isAuthenticated, async (req, res) => {
     const { notification_id } = req.params
     const { read } = req.body
 
@@ -65,7 +67,7 @@ router.put('/:notification_id', async (req, res) => {
 })
 
 // Delete a specific notification
-router.delete('/:notification_id', async (req, res) => {
+router.delete('/:notification_id', isAuthenticated, async (req, res) => {
     const { notification_id } = req.params
 
     try {
