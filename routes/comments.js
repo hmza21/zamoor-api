@@ -1,11 +1,13 @@
 import express from 'express'
 import db from '../db.js'
+import isAuthenticated from '../middleware/isAuthenticated.js'
+
 const router = express.Router()
 
 // Comments API routes
 
 // Get all comments for a specific post
-router.get('/:post_id', async (req, res) => {
+router.get('/:post_id', isAuthenticated, async (req, res) => {
     
     const { post_id } = req.params
     try {
@@ -22,7 +24,7 @@ router.get('/:post_id', async (req, res) => {
 })
 
 // Create a new comment for a specific post
-router.post('/:post_id', async (req, res) => {
+router.post('/:post_id', isAuthenticated, async (req, res) => {
     
     const { post_id } = req.params
     const { content, author } = req.body
@@ -45,7 +47,7 @@ router.post('/:post_id', async (req, res) => {
 })
 
 // Update a specific comment
-router.delete('/:comment_id', async (req, res) => {
+router.delete('/:comment_id', isAuthenticated, async (req, res) => {
     
     const { comment_id } = req.params
 
@@ -63,7 +65,7 @@ router.delete('/:comment_id', async (req, res) => {
 })
 
 // Get all likes for a specific comment
-router.get('/:comment_id/likes', async (req, res) => {
+router.get('/:comment_id/likes', isAuthenticated, async (req, res) => {
     
     const { comment_id } = req.params
 
@@ -81,7 +83,7 @@ router.get('/:comment_id/likes', async (req, res) => {
 })
 
 // Create a new like for a specific comment
-router.post('/:comment_id/likes', async (req, res) => {
+router.post('/:comment_id/likes', isAuthenticated, async (req, res) => {
     
     const { comment_id } = req.params
     const { user_id } = req.body
@@ -104,7 +106,7 @@ router.post('/:comment_id/likes', async (req, res) => {
 })
 
 // Delete a specific like from a comment
-router.delete('/:comment_id/likes/:like_id', async (req, res) => {
+router.delete('/:comment_id/likes/:like_id', isAuthenticated, async (req, res) => {
 
     const { comment_id, like_id } = req.params
 
